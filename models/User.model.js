@@ -5,6 +5,7 @@ const UserSchema = new Schema(
     first_name: String,
     last_name: String,
     mobile: String,
+    otp:Number,
     Cart: [
       {
         productId: Schema.Types.ObjectId,

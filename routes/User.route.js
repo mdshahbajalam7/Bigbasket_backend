@@ -25,8 +25,8 @@ userRouter.post("/login", async (req, res) => {
 
 //login user by otp check
 userRouter.post("/login/otp", async (req, res) => {
-  const { otp } = req.body;
-  const { message, status, value } = await loginUser(otp);
+  const { otp,mobile } = req.body;
+  const { message, status, value } = await loginUser(otp,mobile);
   if (status === "error") {
     return res.status(404).send({ message, status });
   } else if (status === "failed") {

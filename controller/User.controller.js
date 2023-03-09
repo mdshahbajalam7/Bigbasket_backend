@@ -9,11 +9,8 @@ const sendOtp = async (mobile) => {
     const user = await UserModel.findOne({ mobile });
     if (user) {
       const otp = Math.floor(1000 + Math.random() * 9000);
-      const client = new Redis({
-        host: "127.0.0.1",
-        port: 6379,
-      });
-      client.set(otp, mobile, "ex", 60);
+       await UserModel.updateOne({mobile : mobile},
+      {$set: { "otp" : otp}})
       return { message: "otp sent", status: "success", otp };
     } else {
       return { message: "user does not exist", status: "failed" };
@@ -24,17 +21,14 @@ const sendOtp = async (mobile) => {
 };
 
 //login user
-const loginUser = async (otp) => {
+const loginUser = async (otp,mobile) => {
   try {
-    const client = new Redis({
-      host: "127.0.0.1",
-      port: 6379,
-    });
-    let value = await client.get(otp);
-    if (value === null) {
-      return { message: "wrong otp", status: "failed" };
+    const user = await UserModel.findOne({ otp:otp,mobile:mobile });
+    if (user) {
+      return { message: "login success", status: "success", user };
     } else {
-      return { message: "login success", status: "success", value };
+      return { message: "wrong otp", status: "failed" };
+      
     }
   } catch (err) {
     return { message: "something went wrong", status: "error" };

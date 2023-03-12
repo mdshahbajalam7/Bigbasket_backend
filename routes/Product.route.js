@@ -29,15 +29,14 @@ productRouter.get("/:id", async (req, res) => {
 
 
 productRouter.get("/:id/addtocart", async (req, res) => {
-  // console.log(req.cookies.auth);
   const mobile = req.cookies.auth;
-  if (mobile === null || undefined) {
+  if (mobile === null || mobile==undefined) {
     return res
       .status(401)
       .send({ message: "session expired", status: "user logged out" });
   }
   const { id } = req.params;
-  const { qty } = 1;
+  const  qty = 1;
   const { user } = await authenticate(mobile);
   if (user === undefined || user.length === 0) {
     return res

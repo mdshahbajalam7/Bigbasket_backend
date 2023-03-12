@@ -1,7 +1,4 @@
 const UserModel = require("../models/User.model");
-const Redis = require("ioredis");
-const jwt = require("jsonwebtoken");
-const checkLogin = async () => {};
 
 //otp for user varification
 const sendOtp = async (mobile) => {
@@ -9,8 +6,8 @@ const sendOtp = async (mobile) => {
     const user = await UserModel.findOne({ mobile });
     if (user) {
       const otp = Math.floor(1000 + Math.random() * 9000);
-       await UserModel.updateOne({mobile : mobile},
-      {$set: { "otp" : otp}})
+      await UserModel.updateOne({ mobile: mobile }, { $set: { otp: otp } });
+
       return { message: "otp sent", status: "success", otp };
     } else {
       return { message: "user does not exist", status: "failed" };
@@ -21,14 +18,22 @@ const sendOtp = async (mobile) => {
 };
 
 //login user
-const loginUser = async (otp,mobile) => {
+const loginUser = async (otp, mobile) => {
+  if (
+    mobile.toString().length != 10 ||
+    !mobile ||
+    !otp ||
+    otp.toString().length != 4
+  ) {
+    return { message: "Invalid Input", status: "error" };
+  }
   try {
-    const user = await UserModel.findOne({ otp:otp,mobile:mobile });
+    const user = await UserModel.findOne({ otp: otp, mobile: mobile });
     if (user) {
-      return { message: "login success", status: "success", user };
+      await UserModel.updateOne({ mobile: mobile }, { $set: { otp: null } });
+      return { message: "login success", status: "success" };
     } else {
       return { message: "wrong otp", status: "failed" };
-      
     }
   } catch (err) {
     return { message: "something went wrong", status: "error" };
@@ -57,5 +62,4 @@ const signupUser = async (first_name, last_name, mobile) => {
   }
 };
 
-
-module.exports = { checkLogin, loginUser, sendOtp, signupUser };
+module.exports = { loginUser, sendOtp, signupUser };

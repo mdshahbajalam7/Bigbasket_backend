@@ -43,6 +43,7 @@ const getProducts = async (id) => {
 };
 
 const addToCart = async (id, qty, mobile) => {
+  console.log(qty, mobile)
   try {
     const data = await DataModel.findById(id);
     await UserModel.updateOne(

@@ -18,7 +18,7 @@ const cartItems = async (mobile) => {
 
     for (let i = 0; i < cartItems.length; i++) {
       for (let j = 0; j < cart.length; j++) {
-        if (cart[j].productId.toString() === cartItems[i]._id.toString()) {
+        if (cart[j].productId.toString() == cartItems[i]._id.toString()) {
           cartItems[i] = {
             ...cartItems[i],
             quantity: cart[j].quantity,
@@ -37,4 +37,22 @@ const cartItems = async (mobile) => {
   }
 };
 
-module.exports = { cartItems };
+const removecart = async (mobile) => {
+  console.log("mobile", mobile);
+  try {
+    let Data = await UserModel.updateOne(
+      { mobile: mobile },
+      { $set: { Cart: [] } }
+    );
+    console.log("Data", Data);
+
+    return {
+      message: "Cart Data Remove success",
+      status: "success",
+      Data,
+    };
+  } catch (error) {
+    return { message: "something went wrong", status: "error" };
+  }
+};
+module.exports = { cartItems, removecart };

@@ -2,23 +2,21 @@ const express = require("express");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const dotenv = require("dotenv").config();
-const Redis = require("ioredis");
 const productRouter = require("./routes/Product.route");
 const userRouter = require("./routes/User.route");
 const cartRouter = require("./routes/Cart.route");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
-app.set("trust proxy", 1); // trust first proxy
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-    sameSite: "none",
-  })
-);
 
+// Middlewares for the Apis
+app.set("trust proxy", 1);
+app.use(cors({
+  origin: true,
+  credentials: true,
+  sameSite: "none",
+}));
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -26,18 +24,17 @@ app.use(
     saveUninitialized: true,
   })
 );
-
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/BigBasket", userRouter);
-app.use("/BigBasket/product", productRouter);
-app.use("/BigBasket/cart", cartRouter);
+//Api routes
+app.use("/big-basket/auth", userRouter);
+app.use("/big-basket/products", productRouter);
+app.use("/big-basket/cart", cartRouter);
 
 const PORT = process.env.PORT || 8080;
 const mongoDB = process.env.MongoAtlas;
-console.log('mongoDB',mongoDB);
 
 app.listen(PORT, async () => {
   mongoose
